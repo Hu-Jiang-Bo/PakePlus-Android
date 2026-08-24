@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>零秒思考 · 快速思考回话训练</title>
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('zs_theme');
+    if(!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){ t = 'dark'; }
+    if(t !== 'dark') t = 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){ document.documentElement.setAttribute('data-theme', 'light'); }
+})();
+</script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f4efe6;
+  --bg-deep:#ece5d6;
+  --paper:#fffdf8;
+  --paper2:#fffef9;
+  --input-bg:#ffffff;
+  --ink:#2b2722;
+  --muted:#8c8474;
+  --line:#e7dfd0;
+  --accent:#b3402e;
+  --accent2:#2f5d50;
+  --gold:#a97e2f;
+  --cream:#f7efe4;
+  --tint-red:#fdf3ef;
+  --tint-green:#e7f0ea;
+  --chip-bg:#f0e9da;
+  --header-bg:rgba(244,239,230,.9);
+  --on-ink:#faf6ec;
+  --toast-bg:rgba(40,35,28,.95);
+  --toast-fg:#f5efe0;
+  --btn-disabled:#c9b6ae;
+  --radial:rgba(180,150,90,.12);
+  --paper-edge:rgba(179,64,46,.55);
+  --shadow:0 2px 12px rgba(60,50,30,.08);
+  --shadow-md:0 2px 6px rgba(60,50,30,.05),0 14px 34px rgba(60,50,30,.10);
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#211d18;
+  --bg-deep:#1a1713;
+  --paper:#2a2620;
+  --paper2:#2f2a23;
+  --input-bg:#241f19;
+  --ink:#ece3d3;
+  --muted:#a2988a;
+  --line:#3a342b;
+  --accent:#e06a52;
+  --accent2:#5fae93;
+  --gold:#c79a4e;
+  --cream:#37312a;
+  --tint-red:#3a2722;
+  --tint-green:#24352e;
+  --chip-bg:#352f27;
+  --header-bg:rgba(33,29,24,.88);
+  --on-ink:#211d18;
+  --toast-bg:rgba(245,239,224,.96);
+  --toast-fg:#2b2722;
+  --btn-disabled:#443c33;
+  --radial:rgba(200,150,80,.06);
+  --paper-edge:rgba(224,106,82,.5);
+  --shadow:0 2px 14px rgba(0,0,0,.4);
+  --shadow-md:0 2px 6px rgba(0,0,0,.4),0 14px 34px rgba(0,0,0,.5);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Apple Color Emoji",sans-serif;
+  background:
+    radial-gradient(120% 480px at 50% -120px, var(--radial), transparent 62%),
+    linear-gradient(180deg,var(--bg) 0%,var(--bg-deep) 100%);
+  color:var(--ink);
+  min-height:100vh;
+  line-height:1.65;
+  overscroll-behavior-y:none;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+button,input,textarea,select{font-family:inherit}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+.phase{animation:fadeUp .38s cubic-bezier(.22,.61,.36,1) both}
+.card{animation:fadeUp .42s cubic-bezier(.22,.61,.36,1) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.hidden{display:none!important}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px calc(var(--safe-bottom) + 60px)}
+
+/* ---------- 顶栏 ---------- */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:calc(var(--safe-top) + 14px) 0 12px;border-bottom:1px solid var(--line);
+  position:sticky;top:0;background:var(--header-bg);backdrop-filter:blur(10px) saturate(1.1);z-index:10;
+}
+.logo-row{display:flex;align-items:center;gap:11px}
+.seal{
+  background:linear-gradient(145deg,#c14a35,#9c3422);color:#fff;width:38px;height:38px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:"Songti SC","SimSun",serif;font-size:20px;
+  box-shadow:0 2px 5px rgba(179,64,46,.35),inset 0 1px 0 rgba(255,255,255,.18);
+}
+.logo-title{font-size:18px;font-weight:700;letter-spacing:1.5px}
+.logo-en{display:block;font-size:8.5px;letter-spacing:3px;color:var(--muted);font-weight:400;margin-top:1px}
+.key-status{
+  border:1px solid var(--line);background:var(--paper);border-radius:999px;
+  padding:8px 15px;font-size:13px;color:var(--muted);cursor:pointer;
+  transition:.2s;min-height:38px;
+}
+.key-status:active{border-color:var(--accent);color:var(--accent)}
+.key-status .dot{color:var(--accent2)}
+@media (hover:hover){.key-status:hover{border-color:var(--accent);color:var(--accent)}}
+.header-actions{display:flex;align-items:center;gap:8px}
+.theme-btn{
+  width:40px;height:40px;border-radius:999px;border:1px solid var(--line);
+  background:var(--paper);color:var(--ink);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.2s;flex:none;padding:0;
+}
+.theme-btn:active{transform:scale(.92)}
+@media (hover:hover){.theme-btn:hover{border-color:var(--accent);color:var(--accent)}}
+
+/* ---------- 通用 ---------- */
+h1{font-family:"Songti SC","SimSun",serif;font-size:34px;letter-spacing:6px;text-align:center;margin-top:44px}
+.subtitle{text-align:center;color:var(--muted);font-size:14px;letter-spacing:3px;margin:10px 0 28px}
+.card{
+  background:var(--paper);border:1px solid var(--line);border-radius:16px;
+  padding:22px 20px;box-shadow:var(--shadow-md);margin-bottom:18px;
+}
+.card h2{font-size:16px;margin-bottom:10px;letter-spacing:.5px}
+.card .desc{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--paper);
+  color:var(--ink);padding:11px 22px;border-radius:12px;font-size:15px;cursor:pointer;
+  transition:transform .12s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease;font-family:inherit;
+  min-height:46px;user-select:none;
+}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn.primary{
+  background:linear-gradient(145deg,#c14a35,#a2361f);border:none;color:#fff;font-size:16px;
+  padding:13px 28px;box-shadow:0 6px 16px rgba(179,64,46,.28),inset 0 1px 0 rgba(255,255,255,.16);font-weight:600;
+}
+.btn.primary:active{transform:scale(.98)}
+.btn.primary:disabled{background:var(--btn-disabled);box-shadow:none}
+.btn.big{width:100%;padding:15px;font-size:16px;min-height:52px}
+.btn.ghost{background:transparent;box-shadow:none}
+.link{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+@media (hover:hover){
+  .btn:hover{border-color:var(--ink)}
+  .btn.primary:hover{background:linear-gradient(145deg,#b0412f,#8f2e1a)}
+  .link:hover{opacity:.8}
+}
+
+/* ---------- 初始设置页 ---------- */
+.intro-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+.intro-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:12px;
+  padding:16px 14px;box-shadow:var(--shadow);
+}
+.intro-card .num{
+  font-family:"Songti SC","SimSun",serif;color:var(--accent);
+  font-size:13px;letter-spacing:2px;margin-bottom:6px;display:block;
+}
+.intro-card h3{font-size:14px;margin-bottom:5px}
+.intro-card p{font-size:12.5px;color:var(--muted);line-height:1.7}
+.setup-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:26px;box-shadow:var(--shadow)}
+.setup-card h2{font-size:18px;margin-bottom:8px}
+.setup-card .desc{font-size:13px;color:var(--muted);margin-bottom:16px}
+.key-input-row{display:flex;gap:10px}
+.key-input-row input{
+  flex:1;padding:13px 14px;font-size:16px;border:1px solid var(--line);
+  border-radius:10px;background:var(--input-bg);font-family:Consolas,Menlo,monospace;outline:none;
+}
+.key-input-row input:focus{border-color:var(--accent)}
+.key-input-row button{white-space:nowrap}
+.setup-hint{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.8}
+.test-msg{font-size:13px;margin-top:10px;min-height:20px}
+.test-msg.ok{color:var(--accent2)}
+.test-msg.err{color:var(--accent)}
+
+/* ---------- 标签页 ---------- */
+.tabs{display:flex;gap:8px;margin:22px 0 18px}
+.tab{
+  flex:1;padding:13px 0;border-radius:999px;border:1px solid var(--line);
+  background:var(--paper);font-size:15px;cursor:pointer;transition:.18s;font-family:inherit;color:var(--ink);
+  min-height:46px;user-select:none;
+}
+.tab:active{transform:scale(.97)}
+.tab.active{background:var(--ink);color:var(--on-ink);border-color:var(--ink);font-weight:600;box-shadow:var(--shadow-md)}
+
+/* ---------- 分类 chips ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{
+  padding:9px 17px;border-radius:999px;border:1px solid var(--line);
+  background:var(--paper);font-size:14px;cursor:pointer;transition:.15s;font-family:inherit;color:var(--ink);
+  min-height:40px;user-select:none;
+}
+.chip:active{transform:scale(.96)}
+.chip.active{background:var(--ink);color:var(--on-ink);border-color:var(--ink);box-shadow:var(--shadow)}
+@media (hover:hover){.chip:hover{border-color:var(--ink)}}
+
+/* ---------- 题目选项 ---------- */
+.topic-options{display:flex;flex-direction:column;gap:10px;margin:14px 0}
+.topic-opt{
+  text-align:left;padding:13px 16px;border-radius:10px;border:1px solid var(--line);
+  background:var(--paper);font-size:15px;cursor:pointer;transition:.15s;font-family:inherit;color:var(--ink);
+}
+.topic-opt:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+.topic-opt.sel{border:2px solid var(--accent);background:var(--tint-red);font-weight:600}
+.selected-topic{
+  background:var(--cream);border:1px dashed var(--gold);border-radius:10px;
+  padding:12px 16px;margin:14px 0;font-size:14px;color:var(--muted);
+}
+.selected-topic strong{color:var(--ink);font-size:16px;margin-left:8px}
+.setting-row{display:flex;align-items:center;gap:10px;margin:14px 0;font-size:14px;color:var(--muted);flex-wrap:wrap}
+.setting-row select{
+  padding:10px 12px;border:1px solid var(--line);border-radius:10px;
+  background:var(--paper);font-size:16px;font-family:inherit;color:var(--ink);outline:none;
+}
+
+/* ---------- 计时器 ---------- */
+.timer-wrap{position:relative;width:150px;height:150px;margin:6px auto 4px}
+.timer-wrap svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--line);stroke-width:7}
+.ring-fg{
+  fill:none;stroke:var(--accent2);stroke-width:7;stroke-linecap:round;
+  stroke-dasharray:339.29;stroke-dashoffset:0;transition:stroke-dashoffset .12s linear,stroke .3s;
+}
+.timer-text{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:42px;font-weight:700;font-variant-numeric:tabular-nums;
+}
+.timer-label{text-align:center;font-size:12px;color:var(--muted);letter-spacing:3px}
+
+/* ---------- 思考纸 ---------- */
+.writing-topic{
+  font-family:"Songti SC","SimSun",serif;font-size:20px;font-weight:700;
+  text-align:center;margin:12px 0 16px;line-height:1.5;
+}
+.paper{
+  width:100%;min-height:280px;padding:14px 20px;font-size:16px;line-height:2.1em;
+  border:1px solid var(--line);border-radius:10px;background:
+    repeating-linear-gradient(transparent,transparent calc(2.1em - 1px),var(--line) calc(2.1em - 1px),var(--line) 2.1em),
+    var(--paper2);
+  border-left:3px solid var(--paper-edge);
+  resize:vertical;outline:none;font-family:inherit;color:var(--ink);
+}
+.paper:focus{border-color:var(--accent)}
+.write-meta{display:flex;align-items:center;gap:10px;margin:12px 0;font-size:13.5px;color:var(--muted)}
+.goal-badge{
+  font-size:12.5px;background:var(--tint-green);color:var(--accent2);
+  padding:3px 12px;border-radius:999px;
+}
+.write-actions{display:flex;gap:10px}
+.write-actions .btn{flex:1}
+
+/* ---------- 结果 & 点评 ---------- */
+.phase-title{font-size:15px;font-weight:700;letter-spacing:2px;margin:6px 0 12px;color:var(--muted)}
+.result-topic{
+  font-family:"Songti SC","SimSun",serif;font-size:19px;font-weight:700;margin-bottom:10px;
+}
+.result-content{
+  background:var(--paper2);border:1px solid var(--line);border-radius:10px;
+  padding:14px 18px;font-size:15px;line-height:1.9;white-space:pre-wrap;margin-bottom:8px;
+  max-height:300px;overflow:auto;
+}
+.result-meta{font-size:13px;color:var(--muted);margin-bottom:14px}
+.feedback-box{
+  background:var(--paper2);border:1px solid var(--line);border-radius:10px;
+  padding:16px 18px;font-size:15px;line-height:1.9;white-space:pre-wrap;
+  max-height:380px;overflow:auto;margin-bottom:14px;min-height:60px;
+}
+.feedback-box b{color:var(--accent)}
+.score-chips{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+.score-chips span{
+  background:var(--chip-bg);border-radius:8px;padding:4px 12px;font-size:13px;
+}
+.score-chips b{color:var(--accent)}
+.cursor{display:inline-block;animation:blink 1s steps(1) infinite;color:var(--accent)}
+@keyframes blink{50%{opacity:0}}
+.loading-dots{color:var(--muted);letter-spacing:2px}
+.loading-dots::after{content:"·";animation:dots 1.2s steps(3) infinite}
+@keyframes dots{33%{content:"··"}66%{content:"···"}}
+
+/* ---------- 快速回话 ---------- */
+.round-label{text-align:center;font-size:13px;color:var(--muted);letter-spacing:2px;margin-bottom:2px}
+.question-box{
+  position:relative;background:var(--paper2);border:2px solid var(--ink);border-radius:12px;
+  padding:24px 22px;margin:14px 0;font-size:19px;font-weight:600;line-height:1.7;
+}
+.question-box::before{
+  content:"“";position:absolute;top:-6px;left:10px;font-size:44px;color:var(--accent);
+  font-family:"Songti SC","SimSun",serif;line-height:1;
+}
+.answer-input{
+  width:100%;min-height:130px;padding:14px 18px;font-size:16px;line-height:1.9;
+  border:1px solid var(--line);border-radius:10px;background:var(--paper2);
+  resize:vertical;outline:none;font-family:inherit;color:var(--ink);margin-bottom:12px;
+}
+.answer-input:focus{border-color:var(--accent)}
+.summary-row{
+  border-top:1px dashed var(--line);padding:13px 0;font-size:14px;line-height:1.8;
+}
+.summary-row .q{font-weight:600}
+.summary-row .a{color:var(--muted);font-size:13px;margin:4px 0}
+.summary-total{
+  background:var(--cream);border-radius:10px;padding:14px 16px;margin-top:14px;
+  font-size:14px;text-align:center;color:var(--muted);
+}
+.summary-total b{color:var(--accent);font-size:22px;margin:0 4px}
+
+/* ---------- 统计 ---------- */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.stat-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:12px;
+  padding:14px 8px;text-align:center;box-shadow:var(--shadow);
+}
+.stat-card .v{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.stat-card .k{font-size:12px;color:var(--muted);margin-top:2px}
+.record-row{border-top:1px dashed var(--line);padding:13px 2px;font-size:14px}
+.record-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mode-tag{font-size:11.5px;padding:2px 9px;border-radius:999px;letter-spacing:1px}
+.mode-tag.zero{background:var(--tint-red);color:var(--accent)}
+.mode-tag.react{background:var(--tint-green);color:var(--accent2)}
+.record-head .t{font-weight:600}
+.record-head .meta{color:var(--muted);font-size:12.5px;margin-left:auto}
+.record-fb{color:var(--muted);font-size:13px;line-height:1.7;margin-top:5px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ---------- 其他 ---------- */
+.toast{
+  position:fixed;left:50%;bottom:calc(var(--safe-bottom) + 24px);transform:translateX(-50%) translateY(10px);
+  background:var(--toast-bg);color:var(--toast-fg);padding:12px 24px;border-radius:999px;
+  font-size:14px;opacity:0;pointer-events:none;transition:.28s;z-index:99;max-width:86vw;
+  box-shadow:0 10px 30px rgba(0,0,0,.3);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{text-align:center;font-size:12px;color:var(--muted);padding:26px 0 calc(var(--safe-bottom) + 10px);line-height:2}
+@media (max-width:600px){
+  .intro-cards{grid-template-columns:1fr;gap:10px}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  h1{font-size:28px;letter-spacing:5px}
+  .record-head .meta{margin-left:0;width:100%}
+  .card{padding:20px 16px}
+  .setup-card{padding:22px 18px}
+  .question-box{padding:22px 18px;font-size:18px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo-row">
+      <div class="seal">零</div>
+      <div>
+        <div class="logo-title">零秒思考</div>
+        <span class="logo-en">ZERO-SECOND THINKING</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="themeBtn" class="theme-btn" aria-label="切换日夜模式" title="切换日夜模式"></button>
+      <button id="keyBtn" class="key-status hidden"><span class="dot">●</span> API 已连接</button>
+    </div>
+  </header>
+
+  <!-- ================= 初始设置 ================= -->
+  <section id="setupScreen">
+    <h1>零秒思考</h1>
+    <p class="subtitle">一分钟 · 一主题 · 快速思考回话训练</p>
+
+    <div class="intro-cards">
+      <div class="intro-card">
+        <span class="num">壹 · 一分钟一页</span>
+        <h3>限时速写</h3>
+        <p>主题写在左上角,限时 1 分钟,写下 4~6 行、每行 20~30 字的想法。不追求完美,想到什么写什么。</p>
+      </div>
+      <div class="intro-card">
+        <span class="num">贰 · 每天十页</span>
+        <h3>坚持成习惯</h3>
+        <p>每天坚持 10 页,连续几周,思考速度、表达条理都会明显提升,说话不再"卡壳"。</p>
+      </div>
+      <div class="intro-card">
+        <span class="num">叁 · 快速回话</span>
+        <h3>即兴应答</h3>
+        <p>AI 突然抛出一个意外提问,你在倒计时内即时回应,由 AI 教练点评并给出更优的示范回答。</p>
+      </div>
+    </div>
+
+    <div class="setup-card">
+      <h2>连接你的 DeepSeek API</h2>
+      <p class="desc">AI 出题与教练点评需要连接 DeepSeek。Key 仅保存在你的浏览器本地,只发送至 api.deepseek.com。</p>
+      <div class="key-input-row">
+        <input id="keyInput" type="password" placeholder="sk-..." autocomplete="off">
+        <button id="showKeyBtn" class="btn">显示</button>
+      </div>
+      <div class="key-input-row" style="margin-top:10px">
+        <button id="testKeyBtn" class="btn primary big">保存并测试连接</button>
+      </div>
+      <div id="testMsg" class="test-msg"></div>
+      <p class="setup-hint">
+        还没有 Key?前往 <a class="link" href="https://platform.deepseek.com" target="_blank" rel="noopener">platform.deepseek.com</a>
+        注册并创建 API Key(需账户内有余额)。<br>
+        本页使用模型 deepseek-chat,按 token 计费,单次点评费用约几分钱。
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= 主界面 ================= -->
+  <main id="mainScreen" class="hidden">
+    <nav class="tabs">
+      <button class="tab active" data-mode="zero">零秒思考</button>
+      <button class="tab" data-mode="react">快速回话</button>
+      <button class="tab" data-mode="stats">训练记录</button>
+    </nav>
+
+    <!-- ---------- 零秒思考 ---------- -->
+    <section id="panelZero">
+      <!-- 准备 -->
+      <div class="phase" id="zeroPhasePrepare">
+        <div class="card">
+          <h2>选择主题方向</h2>
+          <div class="chips" id="catChips"></div>
+          <input id="customTopic" class="paper" style="min-height:0;padding:11px 14px;background:var(--paper2);line-height:1.5"
+                 placeholder="或直接输入你自己的主题,回车确认">
+          <button id="genTopicsBtn" class="btn primary big" style="margin-top:14px">让 AI 生成练习主题</button>
+          <div class="topic-options" id="topicOptions"></div>
+          <div class="selected-topic hidden" id="selectedTopicBox">本次主题<strong id="selectedTopicText"></strong></div>
+          <div class="setting-row">
+            计时:
+            <select id="zeroDuration">
+              <option value="30">30 秒</option>
+              <option value="60" selected>60 秒(推荐)</option>
+              <option value="90">90 秒</option>
+              <option value="120">120 秒</option>
+            </select>
+            <span style="margin-left:auto">目标:1 分钟内写下 4~6 行</span>
+          </div>
+          <button id="startZeroBtn" class="btn primary big" disabled>开始思考</button>
+        </div>
+      </div>
+
+      <!-- 写作 -->
+      <div class="phase hidden" id="zeroPhaseWrite">
+        <div class="timer-label">剩 余 时 间</div>
+        <div class="timer-wrap">
+          <svg width="150" height="150" viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="54"></circle>
+            <circle class="ring-fg" id="zeroRing" cx="60" cy="60" r="54"></circle>
+          </svg>
+          <div class="timer-text" id="zeroTimerText">60</div>
+        </div>
+        <div class="writing-topic" id="zeroWriteTopic"></div>
+        <textarea id="zeroInput" class="paper" placeholder="想到什么写什么,一行一个想法,不用管逻辑与措辞……"></textarea>
+        <div class="write-meta">
+          已写 <b id="zeroWords">0</b> 字 · <b id="zeroLines">0</b> 行
+          <span id="zeroGoal" class="goal-badge hidden">✓ 已达成 4 行目标</span>
+        </div>
+        <div class="write-actions">
+          <button id="abandonZeroBtn" class="btn ghost">放弃本轮</button>
+          <button id="finishZeroBtn" class="btn primary">提前结束</button>
+        </div>
+      </div>
+
+      <!-- 结果 -->
+      <div class="phase hidden" id="zeroPhaseResult">
+        <div class="card">
+          <div class="phase-title">本 轮 思 考</div>
+          <div class="result-topic" id="zeroResultTopic"></div>
+          <div class="result-content" id="zeroResultContent"></div>
+          <div class="result-meta" id="zeroResultMeta"></div>
+          <div class="phase-title">AI 教 练 点 评</div>
+          <div class="score-chips hidden" id="zeroScores"></div>
+          <div class="feedback-box" id="zeroFeedback"><span class="loading-dots">正在生成点评</span></div>
+          <button id="zeroAgainBtn" class="btn primary big">再来一题</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- 快速回话 ---------- -->
+    <section id="panelReact" class="hidden">
+      <!-- 准备 -->
+      <div class="phase" id="reactPhasePrepare">
+        <div class="card">
+          <h2>即兴应答训练</h2>
+          <p class="desc">AI 扮演突然发问的人,抛出意料之外的问题。你在倒计时内立刻回应,练出"想到即说"的本能。</p>
+          <h2 style="font-size:14px;margin-bottom:8px">训练场景</h2>
+          <div class="chips" id="reactSceneChips"></div>
+          <div class="setting-row">
+            轮数:
+            <select id="reactRounds">
+              <option value="1">1 轮</option>
+              <option value="3" selected>3 轮</option>
+              <option value="5">5 轮</option>
+              <option value="10">10 轮</option>
+            </select>
+            每题限时:
+            <select id="reactTime">
+              <option value="10">10 秒</option>
+              <option value="15" selected>15 秒</option>
+              <option value="20">20 秒</option>
+              <option value="30">30 秒</option>
+            </select>
+          </div>
+          <button id="startReactBtn" class="btn primary big">开始训练</button>
+        </div>
+      </div>
+
+      <!-- 提问 -->
+      <div class="phase hidden" id="reactPhaseQ">
+        <div class="round-label" id="reactRoundLabel"></div>
+        <div class="timer-wrap" style="width:110px;height:110px">
+          <svg width="110" height="110" viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="54"></circle>
+            <circle class="ring-fg" id="reactRing" cx="60" cy="60" r="54"></circle>
+          </svg>
+          <div class="timer-text" id="reactTimerText" style="font-size:32px">15</div>
+        </div>
+        <div class="round-label" id="reactSceneLabel" style="margin-top:4px"></div>
+        <div class="question-box" id="reactQuestion"><span class="loading-dots">正在出题</span></div>
+        <textarea id="reactInput" class="answer-input" placeholder="看到问题,立刻开口(打字)回应……"></textarea>
+        <div class="write-actions">
+          <button id="reactGiveUpBtn" class="btn ghost">跳过</button>
+          <button id="submitReactBtn" class="btn primary">提交回应</button>
+        </div>
+      </div>
+
+      <!-- 点评 -->
+      <div class="phase hidden" id="reactPhaseFb">
+        <div class="card">
+          <div class="round-label" id="reactFbRoundLabel"></div>
+          <div class="question-box" id="reactFbQuestion" style="font-size:16px"></div>
+          <div class="result-content" id="reactFbAnswer"></div>
+          <div class="phase-title">AI 教 练 点 评</div>
+          <div class="score-chips hidden" id="reactScores"></div>
+          <div class="feedback-box" id="reactFeedbackBox"><span class="loading-dots">正在生成点评</span></div>
+          <button id="reactNextBtn" class="btn primary big">下一题</button>
+        </div>
+      </div>
+
+      <!-- 总结 -->
+      <div class="phase hidden" id="reactPhaseSummary">
+        <div class="card">
+          <div class="phase-title">本 轮 训 练 总 结</div>
+          <div id="reactSummaryBox"></div>
+          <div class="summary-total" id="reactSummaryTotal"></div>
+          <button id="reactRestartBtn" class="btn primary big" style="margin-top:16px">再练一组</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- 训练记录 ---------- -->
+    <section id="panelStats" class="hidden">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="v" id="statTotal">0</div><div class="k">累计训练</div></div>
+        <div class="stat-card"><div class="v" id="statWords">0</div><div class="k">累计字数</div></div>
+        <div class="stat-card"><div class="v" id="statAvg">0</div><div class="k">平均字数/次</div></div>
+        <div class="stat-card"><div class="v" id="statWeek">0</div><div class="k">近 7 天训练</div></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <h2 style="margin:0">最近记录</h2>
+          <button id="clearRecordsBtn" class="btn" style="padding:5px 14px;font-size:12.5px">清空记录</button>
+        </div>
+        <div id="recordsList"><p class="desc" style="margin-top:10px">还没有训练记录,快去练一页吧。</p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    灵感来源:赤羽雄二《零秒思考》<br>
+    你的 API Key 与训练记录仅保存在本机浏览器 localStorage,不会上传到任何第三方服务器
+  </footer>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ================================================================
+   零秒思考 · 快速思考回话训练
+   依赖:DeepSeek API(deepseek-chat),浏览器直连
+   ================================================================ */
+const LS_KEY = 'zs_api_key';
+const LS_REC = 'zs_records';
+const LS_SET = 'zs_settings';
+const LS_THEME = 'zs_theme';
+const ICON_SUN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const ICON_MOON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+function currentTheme(){ return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  try { localStorage.setItem(LS_THEME, t); } catch (e) {}
+  $('themeBtn').innerHTML = t === 'dark' ? ICON_SUN : ICON_MOON;
+}
+
+const state = {
+  key: localStorage.getItem(LS_KEY) || '',
+  records: JSON.parse(localStorage.getItem(LS_REC) || '[]'),
+  settings: Object.assign(
+    { zeroDuration: 60, reactScene: '职场沟通', reactRounds: 3, reactTime: 15 },
+    JSON.parse(localStorage.getItem(LS_SET) || '{}')
+  ),
+  mode: 'zero',
+  zero: { category: '随机', topics: [], topic: '', phase: 'prepare', duration: 60, timer: null, endTime: 0, content: '', elapsed: 0, recordId: null },
+  react: { scene: '职场沟通', rounds: 3, time: 15, phase: 'prepare', roundIdx: 0, question: '', answer: '', elapsed: 0, timer: null, endTime: 0, results: [], recordId: null, submitted: false }
+};
+
+const CATS = [
+  '随机',
+  // 工作
+  '工作', '职场沟通', '汇报与会议', '时间管理', '职业规划', '团队管理', '领导力', '客户与销售', '副业与创业',
+  // 生活
+  '生活', '健康与运动', '饮食与睡眠', '理财与消费', '家庭与亲子', '居家收纳', '休闲娱乐', '城市生活',
+  // 人际关系
+  '人际关系', '亲密关系', '友情', '原生家庭', '社交与应酬', '冲突处理',
+  // 自我成长
+  '自我成长', '学习与阅读', '情绪管理', '自律与拖延', '习惯养成', '目标与梦想', '思维与认知', '性格与自信',
+  // 社会观察
+  '社会观察', '科技与AI', '教育', '经济与消费', '环境与城市', '文化与价值观', '热点时事'
+];
+const SCENES = [
+  '随机',
+  // 职场
+  '职场沟通', '面试问答', '向上汇报', '同事协作', '客户沟通', '商务谈判', '团队管理',
+  // 社交
+  '日常社交', '朋友相处', '亲密关系', '家庭亲戚', '陌生破冰', '公开场合', '冲突被怼', '演讲答辩', '危机应对', '恋爱约会', '谈判说服'
+];
+
+const SYS_COACH = '你是一位经验丰富的"零秒思考"训练教练,精通赤羽雄二《零秒思考》的理念。你的点评具体、直接、有鼓励性,一针见血地指出问题并给出可立即执行的建议。';
+
+let curAbort = null;
+let audioCtx = null;
+
+/* ---------------- 工具 ---------------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nowStr = ts => { const d = new Date(ts); const p = n => String(n).padStart(2, '0'); return `${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const persistRecords = () => localStorage.setItem(LS_REC, JSON.stringify(state.records));
+const persistSettings = () => localStorage.setItem(LS_SET, JSON.stringify(state.settings));
+
+function saveRecord(rec) { state.records.push(rec); persistRecords(); }
+function updateRecord(id, patch) { const r = state.records.find(x => x.id === id); if (r) { Object.assign(r, patch); persistRecords(); } }
+
+let toastTimer = null;
+function toast(msg, ms = 2600) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), ms);
+}
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function beep(freq, dur = 0.12, vol = 0.15, delay = 0) {
+  try {
+    ensureAudio();
+    const t = audioCtx.currentTime + delay;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.connect(g).connect(audioCtx.destination);
+    o.start(t); o.stop(t + dur);
+  } catch (e) {}
+}
+const startSound = () => { beep(880, .1); beep(1174.66, .15, .15, .12); };
+const endSound = () => { beep(659.25, .25); beep(493.88, .3, .15, .3); };
+
+function runTimer(durationSec, onTick, onEnd) {
+  const endTime = Date.now() + durationSec * 1000;
+  const iv = setInterval(() => {
+    const msLeft = endTime - Date.now();
+    const remain = Math.max(0, Math.ceil(msLeft / 1000));
+    onTick(remain, Math.max(0, msLeft / 1000) / durationSec);
+    if (msLeft <= 0) { clearInterval(iv); onEnd(); }
+  }, 100);
+  return { endTime, stop() { clearInterval(iv); } };
+}
+
+const RING_C = 2 * Math.PI * 54;
+function setRing(el, frac) {
+  el.style.strokeDashoffset = RING_C * (1 - frac);
+  el.style.stroke = frac > 0.5 ? 'var(--accent2)' : frac > 0.25 ? 'var(--gold)' : 'var(--accent)';
+}
+
+function fmtFeedback(text) {
+  return esc(text).replace(/^(【[^】]+】)/gm, '<b>$1</b>');
+}
+function renderFeedbackBox(el, text, streaming) {
+  el.innerHTML = text ? fmtFeedback(text) + (streaming ? '<span class="cursor">▍</span>' : '') : '<span class="loading-dots">正在生成点评</span>';
+  el.scrollTop = el.scrollHeight;
+}
+
+function parseScores(text) {
+  const scores = {};
+  const re = /【(.+?)】\s*(\d+)\s*\/\s*10/g;
+  let m;
+  while ((m = re.exec(text))) scores[m[1]] = parseInt(m[2], 10);
+  return scores;
+}
+function renderScoreChips(el, scores) {
+  if (!scores || !Object.keys(scores).length) { el.classList.add('hidden'); return; }
+  el.classList.remove('hidden');
+  el.innerHTML = Object.entries(scores).map(([k, v]) => `<span>${esc(k)} <b>${v}/10</b></span>`).join('');
+}
+function avgScore(scores) {
+  const vs = Object.values(scores || {});
+  return vs.length ? (vs.reduce((a, b) => a + b, 0) / vs.length).toFixed(1) : null;
+}
+
+/* ---------------- DeepSeek API ---------------- */
+async function deepseek(messages, opts = {}) {
+  const { stream = false, onDelta, abort } = opts;
+  const ctrl = abort || new AbortController();
+  const res = await fetch('https://api.deepseek.com/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.key },
+    body: JSON.stringify({
+      model: 'deepseek-chat',
+      messages,
+      stream,
+      temperature: 0.7,
+      max_tokens: 1000
+    }),
+    signal: ctrl.signal
+  });
+  if (!res.ok) {
+    let msg = 'HTTP ' + res.status;
+    try { const j = await res.json(); msg = j.error && j.error.message ? j.error.message : msg; } catch (e) {}
+    throw new Error(msg);
+  }
+  if (!stream) return res.json();
+
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let buf = '';
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, { stream: true });
+    let i;
+    while ((i = buf.indexOf('\n')) >= 0) {
+      const line = buf.slice(0, i).trim();
+      buf = buf.slice(i + 1);
+      if (!line.startsWith('data:')) continue;
+      const data = line.slice(5).trim();
+      if (data === '[DONE]') return;
+      try {
+        const j = JSON.parse(data);
+        const d = j.choices && j.choices[0] && j.choices[0].delta && j.choices[0].delta.content;
+        if (d) onDelta(d);
+      } catch (e) {}
+    }
+  }
+}
+
+async function testKey(key) {
+  state.key = key;
+  const r = await deepseek([{ role: 'user', content: '回复:OK' }], {});
+  if (!r.choices || !r.choices.length) throw new Error('响应异常');
+  return true;
+}
+
+/* ---------------- 界面切换 ---------------- */
+function switchMode(m) {
+  if (state.zero.timer || state.react.timer) { toast('请先结束当前训练'); return; }
+  state.mode = m;
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
+  $('panelZero').classList.toggle('hidden', m !== 'zero');
+  $('panelReact').classList.toggle('hidden', m !== 'react');
+  $('panelStats').classList.toggle('hidden', m !== 'stats');
+  if (m === 'stats') renderStats();
+  if (m === 'react') renderReact();
+  if (m === 'zero') renderZero();
+  window.scrollTo({ top: 0 });
+}
+
+function showSetup() {
+  $('setupScreen').classList.remove('hidden');
+  $('mainScreen').classList.add('hidden');
+  $('keyBtn').classList.add('hidden');
+}
+function showMain() {
+  $('setupScreen').classList.add('hidden');
+  $('mainScreen').classList.remove('hidden');
+  $('keyBtn').classList.remove('hidden');
+  switchMode(state.mode);
+}
+
+/* ---------------- 零秒思考 ---------------- */
+function renderZero() {
+  const z = state.zero;
+  $('zeroPhasePrepare').classList.toggle('hidden', z.phase !== 'prepare');
+  $('zeroPhaseWrite').classList.toggle('hidden', z.phase !== 'write');
+  $('zeroPhaseResult').classList.toggle('hidden', z.phase !== 'result');
+  if (z.phase === 'write') {
+    $('zeroWriteTopic').textContent = z.topic;
+  }
+  if (z.phase === 'result') {
+    $('zeroResultTopic').textContent = z.topic;
+    $('zeroResultContent').textContent = z.content || '(本轮未写下内容)';
+    $('zeroResultMeta').textContent = `${z.words} 字 · ${z.lines} 行 · 用时 ${z.elapsed} 秒`;
+  }
+}
+
+function renderChips() {
+  $('catChips').innerHTML = CATS.map(c => `<button class="chip${c === state.zero.category ? ' active' : ''}" data-cat="${c}">${c}</button>`).join('');
+  $('reactSceneChips').innerHTML = SCENES.map(s => `<button class="chip${s === state.react.scene ? ' active' : ''}" data-scene="${s}">${s}</button>`).join('');
+}
+
+function selectTopic(t) {
+  const z = state.zero;
+  z.topic = t;
+  z.topics = [];
+  $('topicOptions').innerHTML = '';
+  $('selectedTopicBox').classList.remove('hidden');
+  $('selectedTopicText').textContent = t;
+  $('startZeroBtn').disabled = false;
+}
+
+async function genTopics() {
+  const z = state.zero;
+  if (!state.key) { toast('请先配置 API Key'); return; }
+  const btn = $('genTopicsBtn');
+  btn.disabled = true;
+  btn.textContent = 'AI 正在出题…';
+  try {
+    const cat = z.category;
+    const prompt = `请生成3个适合「${cat}」类别的零秒思考练习主题(类别为随机时,从任何领域选)。要求:具体、贴近真实生活、能引发多角度思考,每个主题20字以内。只输出JSON数组,格式:["主题1","主题2","主题3"],不要其他任何文字。`;
+    const r = await deepseek([{ role: 'system', content: SYS_COACH }, { role: 'user', content: prompt }], {});
+    const raw = r.choices[0].message.content;
+    const m = raw.match(/\[[\s\S]*\]/);
+    const arr = JSON.parse(m ? m[0] : raw);
+    const topics = arr.filter(t => typeof t === 'string' && t.trim()).map(t => t.trim()).slice(0, 3);
+    if (topics.length < 3) throw new Error('AI 返回的主题不足 3 个');
+    z.topics = topics;
+    $('topicOptions').innerHTML = topics.map(t => `<button class="topic-opt" data-topic="${esc(t)}">${esc(t)}</button>`).join('');
+    toast('请选择一个主题');
+  } catch (e) {
+    z.topics = [];
+    $('topicOptions').innerHTML = '';
+    toast('AI 出题失败:' + (e.message || '未知错误'));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '让 AI 生成练习主题';
+  }
+}
+
+function startZero() {
+  const z = state.zero;
+  if (!z.topic) { toast('请先选择或输入主题'); return; }
+  z.duration = parseInt($('zeroDuration').value, 10);
+  state.settings.zeroDuration = z.duration; persistSettings();
+  z.content = ''; z.elapsed = 0; z.recordId = null;
+  z.phase = 'write';
+  const ta = $('zeroInput');
+  ta.value = '';
+  ta.readOnly = false;
+  $('zeroGoal').classList.add('hidden');
+  renderZero();
+  startSound();
+  z.timer = runTimer(z.duration, (remain, frac) => {
+    $('zeroTimerText').textContent = remain;
+    setRing($('zeroRing'), frac);
+  }, () => finishZero());
+  setTimeout(() => ta.focus(), 50);
+}
+
+function countWords(s) {
+  return s.replace(/\s+/g, '').length;
+}
+
+function finishZero() {
+  const z = state.zero;
+  if (z.phase !== 'write' || !z.timer) return;
+  z.timer.stop();
+  const msLeft = Math.max(0, z.timer.endTime - Date.now());
+  z.elapsed = Math.max(0, Math.round((z.duration * 1000 - msLeft) / 100) / 10);
+  z.timer = null;
+  z.content = $('zeroInput').value;
+  z.words = countWords(z.content);
+  z.lines = z.content.split('\n').filter(l => l.trim()).length;
+  $('zeroInput').readOnly = true;
+  endSound();
+  z.phase = 'result';
+  renderZero();
+  $('zeroFeedback').innerHTML = '<span class="loading-dots">正在生成点评</span>';
+  $('zeroScores').classList.add('hidden');
+  z.recordId = newId();
+  saveRecord({ id: z.recordId, mode: 'zero', topic: z.topic, content: z.content, words: z.words, lines: z.lines, duration: z.elapsed, date: Date.now(), feedback: '', scores: null });
+  feedbackZero();
+}
+
+async function feedbackZero() {
+  const z = state.zero;
+  if (!z.content.trim()) {
+    $('zeroFeedback').textContent = '本轮没有写下内容。零秒思考的关键是"先写第一反应"——下次哪怕只写一个词,也要动笔。';
+    return;
+  }
+  curAbort = new AbortController();
+  const prompt = `请点评学员的一分钟零秒思考练习。\n主题:${z.topic}\n限时 ${z.duration} 秒,实际用时 ${z.elapsed} 秒。\n内容:\n${z.content}\n\n请严格按以下格式输出:\n【思维广度】X/10 - 一句话点评\n【结构条理】X/10 - 一句话点评\n【表达简洁】X/10 - 一句话点评\n【总评】2-3句\n【建议】1-2条具体可执行的改进建议`;
+  try {
+    await deepseek([{ role: 'system', content: SYS_COACH }, { role: 'user', content: prompt }], {
+      stream: true,
+      abort: curAbort,
+      onDelta: d => { z.feedback += d; renderFeedbackBox($('zeroFeedback'), z.feedback, true); }
+    });
+    const scores = parseScores(z.feedback);
+    renderScoreChips($('zeroScores'), scores);
+    renderFeedbackBox($('zeroFeedback'), z.feedback, false);
+    updateRecord(z.recordId, { feedback: z.feedback, scores });
+  } catch (e) {
+    if (e.name === 'AbortError') {
+      z.feedback += '\n(已跳过点评)';
+      renderFeedbackBox($('zeroFeedback'), z.feedback, false);
+    } else {
+      renderFeedbackBox($('zeroFeedback'), '点评生成失败:' + e.message, false);
+      toast('点评失败:' + e.message);
+    }
+    updateRecord(z.recordId, { feedback: z.feedback, scores: parseScores(z.feedback) });
+  }
+}
+
+function resetZero() {
+  if (curAbort) { curAbort.abort(); curAbort = null; }
+  const z = state.zero;
+  z.phase = 'prepare'; z.topics = []; z.topic = ''; z.content = ''; z.feedback = ''; z.timer = null;
+  $('topicOptions').innerHTML = '';
+  $('selectedTopicBox').classList.add('hidden');
+  $('customTopic').value = '';
+  $('startZeroBtn').disabled = true;
+  renderZero();
+  window.scrollTo({ top: 0 });
+}
+
+function abandonZero() {
+  if (!confirm('放弃本轮?已写内容不会保存。')) return;
+  const z = state.zero;
+  if (z.timer) { z.timer.stop(); z.timer = null; }
+  z.phase = 'prepare'; z.topic = ''; z.topics = []; z.content = '';
+  $('topicOptions').innerHTML = '';
+  $('selectedTopicBox').classList.add('hidden');
+  $('startZeroBtn').disabled = true;
+  renderZero();
+}
+
+/* ---------------- 快速回话 ---------------- */
+function renderReact() {
+  const r = state.react;
+  $('reactPhasePrepare').classList.toggle('hidden', r.phase !== 'prepare');
+  $('reactPhaseQ').classList.toggle('hidden', r.phase !== 'q');
+  $('reactPhaseFb').classList.toggle('hidden', r.phase !== 'fb');
+  $('reactPhaseSummary').classList.toggle('hidden', r.phase !== 'summary');
+}
+
+function startReact() {
+  const r = state.react;
+  r.rounds = parseInt($('reactRounds').value, 10);
+  r.time = parseInt($('reactTime').value, 10);
+  state.settings.reactRounds = r.rounds;
+  state.settings.reactTime = r.time;
+  persistSettings();
+  r.roundIdx = 0;
+  r.results = [];
+  r.phase = 'q';
+  renderReact();
+  genReactQuestion();
+}
+
+async function genReactQuestion() {
+  const r = state.react;
+  r.question = ''; r.answer = ''; r.elapsed = 0; r.recordId = null; r.submitted = false; r.genFailed = false;
+  const ta = $('reactInput');
+  ta.value = ''; ta.readOnly = false;
+  $('reactQuestion').innerHTML = '<span class="loading-dots">正在出题</span>';
+  $('reactRoundLabel').textContent = `第 ${r.roundIdx + 1} / ${r.rounds} 题`;
+  $('reactSceneLabel').textContent = '场景:' + r.scene;
+  $('submitReactBtn').textContent = '提交回应';
+  $('reactGiveUpBtn').disabled = false;
+
+  let q = '';
+  let errMsg = '';
+  try {
+    const prompt = `你是"零秒思考"训练教练,正在做快速反应回话训练。请出一道「${r.scene}」场景的即兴提问:对方突然抛出一个意料之外、需要立刻回应的问题。要求:贴近真实场景、有挑战性、一句话(30字内)。只输出问题本身,不要任何其他文字。`;
+    const resp = await deepseek([{ role: 'system', content: SYS_COACH }, { role: 'user', content: prompt }], {});
+    q = (resp.choices[0].message.content || '').trim().split('\n')[0].replace(/^["「]|["」]$/g, '');
+  } catch (e) {
+    errMsg = e.message || '';
+  }
+  if (!q) {
+    r.genFailed = true;
+    $('reactQuestion').textContent = 'AI 出题失败' + (errMsg ? ':' + errMsg : '') + ',请点击下方按钮重试';
+    $('submitReactBtn').textContent = '重新出题';
+    $('reactGiveUpBtn').disabled = true;
+    return;
+  }
+  r.question = q;
+  $('reactQuestion').textContent = q;
+
+  startSound();
+  r.timer = runTimer(r.time, (remain, frac) => {
+    $('reactTimerText').textContent = remain;
+    setRing($('reactRing'), frac);
+  }, () => submitReactAnswer(true));
+  setTimeout(() => ta.focus(), 50);
+}
+
+function submitReactAnswer(auto) {
+  const r = state.react;
+  if (r.phase !== 'q' || r.submitted) return;
+  r.submitted = true;
+  if (r.timer) {
+    r.timer.stop();
+    const msLeft = Math.max(0, r.timer.endTime - Date.now());
+    r.elapsed = Math.max(0, Math.round((r.time * 1000 - msLeft) / 100) / 10);
+    r.timer = null;
+  }
+  r.answer = $('reactInput').value.trim();
+  $('reactInput').readOnly = true;
+  endSound();
+  r.phase = 'fb';
+  renderReact();
+  $('reactFbRoundLabel').textContent = `第 ${r.roundIdx + 1} / ${r.rounds} 题 · 用时 ${r.elapsed} 秒` + (auto ? ' · 超时自动提交' : '');
+  $('reactFbQuestion').textContent = r.question;
+  $('reactFbAnswer').textContent = r.answer || '(未能在时间内作答)';
+  $('reactFeedbackBox').innerHTML = '<span class="loading-dots">正在生成点评</span>';
+  $('reactScores').classList.add('hidden');
+  r.recordId = newId();
+  saveRecord({ id: r.recordId, mode: 'react', topic: r.question, content: r.answer, words: r.answer ? countWords(r.answer) : 0, duration: r.elapsed, date: Date.now(), feedback: '', scores: null });
+  feedbackReact();
+}
+
+async function feedbackReact() {
+  const r = state.react;
+  curAbort = new AbortController();
+  let prompt = `快速反应回话训练点评。\n场景:${r.scene}\n对方突然问:「${r.question}」\n学员在 ${r.elapsed} 秒内作答:「${r.answer || '(未作答)'}」`;
+  if (!r.answer) prompt += '\n学员未能在时间内作答,请重点指出遇到此类突发提问时,应如何快速组织回应的思路。';
+  prompt += '\n\n请严格按以下格式输出:\n【反应质量】X/10 - 一句话点评\n【回答结构】X/10 - 一句话点评\n【语言表达】X/10 - 一句话点评\n【示范回答】给出一个更自然得体的回答(60字内)\n【建议】1条';
+  try {
+    await deepseek([{ role: 'system', content: SYS_COACH }, { role: 'user', content: prompt }], {
+      stream: true,
+      abort: curAbort,
+      onDelta: d => { r.feedback += d; renderFeedbackBox($('reactFeedbackBox'), r.feedback, true); }
+    });
+    const scores = parseScores(r.feedback);
+    renderScoreChips($('reactScores'), scores);
+    renderFeedbackBox($('reactFeedbackBox'), r.feedback, false);
+    updateRecord(r.recordId, { feedback: r.feedback, scores });
+    r.results.push({ q: r.question, a: r.answer, elapsed: r.elapsed, scores });
+  } catch (e) {
+    if (e.name === 'AbortError') {
+      renderFeedbackBox($('reactFeedbackBox'), r.feedback || '(已跳过点评)', false);
+    } else {
+      renderFeedbackBox($('reactFeedbackBox'), '点评生成失败:' + e.message, false);
+    }
+    updateRecord(r.recordId, { feedback: r.feedback, scores: parseScores(r.feedback) });
+    r.results.push({ q: r.question, a: r.answer, elapsed: r.elapsed, scores: parseScores(r.feedback) });
+  }
+  $('reactNextBtn').textContent = (r.roundIdx + 1 >= r.rounds) ? '查看总结' : '下一题';
+}
+
+function reactNext() {
+  const r = state.react;
+  r.roundIdx++;
+  r.feedback = '';
+  if (r.roundIdx >= r.rounds) {
+    r.phase = 'summary';
+    renderReact();
+    renderReactSummary();
+    window.scrollTo({ top: 0 });
+  } else {
+    r.phase = 'q';
+    renderReact();
+    genReactQuestion();
+  }
+}
+
+function renderReactSummary() {
+  const r = state.react;
+  const box = $('reactSummaryBox');
+  box.innerHTML = r.results.map((x, i) => {
+    const sc = avgScore(x.scores);
+    return `<div class="summary-row">
+      <div class="q">${i + 1}. ${esc(x.q)}</div>
+      <div class="a">你的回应:${esc(x.a || '(未作答)')} · 用时 ${x.elapsed} 秒${sc ? ' · 得分 <b style="color:var(--accent)">' + sc + '</b>' : ''}</div>
+    </div>`;
+  }).join('');
+  const all = r.results.map(x => avgScore(x.scores)).filter(Boolean).map(Number);
+  $('reactSummaryTotal').innerHTML = all.length
+    ? `本组 ${r.results.length} 题平均得分 <b>${(all.reduce((a, b) => a + b, 0) / all.length).toFixed(1)}</b> / 10`
+    : `本组共完成 ${r.results.length} 题`;
+}
+
+function reactGiveUp() {
+  const r = state.react;
+  if (r.phase !== 'q' || r.submitted) return;
+  if (r.timer) { r.timer.stop(); r.timer = null; }
+  r.submitted = true;
+  r.recordId = newId();
+  saveRecord({ id: r.recordId, mode: 'react', topic: r.question || '(跳过的题目)', content: '(放弃作答)', words: 0, duration: r.elapsed, date: Date.now(), feedback: '', scores: null });
+  r.results.push({ q: r.question || '(跳过的题目)', a: '(放弃作答)', elapsed: r.elapsed, scores: null });
+  r.roundIdx++;
+  r.feedback = '';
+  if (r.roundIdx >= r.rounds) {
+    r.phase = 'summary';
+    renderReact();
+    renderReactSummary();
+  } else {
+    r.phase = 'q';
+    renderReact();
+    genReactQuestion();
+  }
+}
+
+/* ---------------- 统计 ---------------- */
+function renderStats() {
+  const recs = state.records;
+  const total = recs.length;
+  const words = recs.reduce((a, b) => a + (b.words || 0), 0);
+  const weekAgo = Date.now() - 7 * 864e5;
+  const week = recs.filter(r => r.date > weekAgo).length;
+  $('statTotal').textContent = total;
+  $('statWords').textContent = words;
+  $('statAvg').textContent = total ? Math.round(words / total) : 0;
+  $('statWeek').textContent = week;
+
+  const list = $('recordsList');
+  if (!total) { list.innerHTML = '<p class="desc" style="margin-top:10px">还没有训练记录,快去练一页吧。</p>'; return; }
+  list.innerHTML = recs.slice().reverse().slice(0, 30).map(r => {
+    const tag = r.mode === 'zero' ? '<span class="mode-tag zero">零秒思考</span>' : '<span class="mode-tag react">快速回话</span>';
+    const sc = avgScore(r.scores);
+    return `<div class="record-row">
+      <div class="record-head">${tag}<span class="t">${esc(r.topic || '')}</span>
+        <span class="meta">${r.words || 0} 字 · ${r.duration || 0}s · ${nowStr(r.date)}${sc ? ' · ' + sc + '分' : ''}</span>
+      </div>
+      ${r.feedback ? '<div class="record-fb">' + esc(r.feedback.replace(/\n+/g, ' ')).slice(0, 140) + '</div>' : ''}
+    </div>`;
+  }).join('');
+}
+
+/* ---------------- 事件绑定 ---------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  renderChips();
+  applyTheme(currentTheme());
+  $('themeBtn').addEventListener('click', () => applyTheme(currentTheme() === 'dark' ? 'light' : 'dark'));
+
+  if (state.key) { showMain(); } else { showSetup(); }
+
+  $('keyBtn').addEventListener('click', () => {
+    $('keyInput').value = state.key;
+    showSetup();
+  });
+
+  $('showKeyBtn').addEventListener('click', () => {
+    const inp = $('keyInput');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    $('showKeyBtn').textContent = inp.type === 'password' ? '显示' : '隐藏';
+  });
+
+  $('testKeyBtn').addEventListener('click', async () => {
+    const key = $('keyInput').value.trim();
+    const msg = $('testMsg');
+    if (!key.startsWith('sk-')) { msg.className = 'test-msg err'; msg.textContent = '请输入以 sk- 开头的有效 API Key'; return; }
+    const btn = $('testKeyBtn');
+    btn.disabled = true; btn.textContent = '正在测试连接…';
+    msg.className = 'test-msg'; msg.textContent = '';
+    try {
+      await testKey(key);
+      localStorage.setItem(LS_KEY, key);
+      msg.className = 'test-msg ok';
+      msg.textContent = '✓ 连接成功';
+      toast('API 连接成功');
+      setTimeout(showMain, 500);
+    } catch (e) {
+      msg.className = 'test-msg err';
+      msg.textContent = '连接失败:' + e.message;
+      toast('连接失败:' + e.message);
+    } finally {
+      btn.disabled = false; btn.textContent = '保存并测试连接';
+    }
+  });
+
+  $('keyInput').addEventListener('keydown', e => { if (e.key === 'Enter') $('testKeyBtn').click(); });
+
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => switchMode(b.dataset.mode)));
+
+  /* --- 零秒思考 --- */
+  $('catChips').addEventListener('click', e => {
+    const c = e.target.dataset.cat;
+    if (!c) return;
+    state.zero.category = c;
+    renderChips();
+  });
+
+  $('customTopic').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const v = e.target.value.trim();
+      if (v) selectTopic(v);
+    }
+  });
+
+  $('topicOptions').addEventListener('click', e => {
+    const t = e.target.dataset.topic;
+    if (!t) return;
+    document.querySelectorAll('.topic-opt').forEach(b => b.classList.toggle('sel', b.dataset.topic === t));
+    selectTopic(t);
+  });
+
+  $('genTopicsBtn').addEventListener('click', genTopics);
+  $('startZeroBtn').addEventListener('click', startZero);
+  $('finishZeroBtn').addEventListener('click', finishZero);
+  $('abandonZeroBtn').addEventListener('click', abandonZero);
+  $('zeroAgainBtn').addEventListener('click', resetZero);
+
+  $('zeroInput').addEventListener('input', () => {
+    const v = $('zeroInput').value;
+    $('zeroWords').textContent = countWords(v);
+    const lines = v.split('\n').filter(l => l.trim()).length;
+    $('zeroLines').textContent = lines;
+    $('zeroGoal').classList.toggle('hidden', lines < 4);
+  });
+
+  /* --- 快速回话 --- */
+  $('reactSceneChips').addEventListener('click', e => {
+    const s = e.target.dataset.scene;
+    if (!s) return;
+    state.react.scene = s;
+    state.settings.reactScene = s;
+    persistSettings();
+    renderChips();
+  });
+
+  $('startReactBtn').addEventListener('click', startReact);
+  $('submitReactBtn').addEventListener('click', () => {
+    if (state.react.genFailed) {
+      genReactQuestion();
+    } else {
+      submitReactAnswer(false);
+    }
+  });
+  $('reactGiveUpBtn').addEventListener('click', reactGiveUp);
+  $('reactNextBtn').addEventListener('click', reactNext);
+  $('reactRestartBtn').addEventListener('click', () => {
+    state.react.phase = 'prepare';
+    state.react.results = [];
+    renderReact();
+  });
+
+  $('reactInput').addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') submitReactAnswer(false);
+  });
+
+  /* --- 统计 --- */
+  $('clearRecordsBtn').addEventListener('click', () => {
+    if (!state.records.length) { toast('暂无记录'); return; }
+    if (!confirm('确定清空全部训练记录?此操作不可恢复。')) return;
+    state.records = [];
+    persistRecords();
+    renderStats();
+    toast('已清空');
+  });
+});
+</script>
+</body>
+</html>
